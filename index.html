@@ -641,18 +641,35 @@ function drawWorld(){
 }
 
 // ── Nourriture ──
-function drawFood(f){
-  const wb=Math.sin((f.wobble||0)+foodWobble)*1.5;
-  ctx.save();ctx.translate(f.x,f.y);ctx.rotate(foodWobble*.3);
-  const g=ctx.createRadialGradient(0,0,0,0,0,f.r*2.5);
-  g.addColorStop(0,f.color+'88');g.addColorStop(1,'transparent');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,f.r*2.5,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=f.color;ctx.shadowColor=f.color;ctx.shadowBlur=8;
-  if(f.type==='circle'){ctx.beginPath();ctx.arc(0,wb*.3,f.r,0,Math.PI*2);ctx.fill();}
-  else if(f.type==='star'){drawStar(0,0,5,f.r,f.r*.45);ctx.fill();}
-  else{ctx.beginPath();ctx.moveTo(0,-f.r);ctx.lineTo(f.r*.7,0);ctx.lineTo(0,f.r);ctx.lineTo(-f.r*.7,0);ctx.closePath();ctx.fill();}
-  ctx.shadowBlur=0;ctx.restore();
+function drawFood(f) {
+  const wb = Math.sin((f.wobble || 0) + foodWobble) * 1.2;
+  ctx.save();
+  ctx.translate(f.x, f.y);
+
+  // Dégradé léger
+  const base = f.color.replace('hsl', 'hsla').replace(')', ',0.45)');
+  const grd = ctx.createRadialGradient(0,0,0,0,0,f.r*2);
+  grd.addColorStop(0, base);
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(0,0,f.r*2,0,Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = f.color;
+
+  if (f.type === 'circle') {
+    ctx.beginPath(); ctx.arc(0,wb*0.2,f.r,0,Math.PI*2); ctx.fill();
+  } else if (f.type === 'star') {
+    drawStar(0,0,5,f.r,f.r*0.45); ctx.fill();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(0,-f.r); ctx.lineTo(f.r*0.7,0);
+    ctx.lineTo(0,f.r); ctx.lineTo(-f.r*0.7,0);
+    ctx.closePath(); ctx.fill();
+  }
+
+  ctx.restore();
 }
+
 
 // ── Trail ──
 function drawTrail(p){
