@@ -750,9 +750,11 @@ function drawFood(f) {
   ctx.translate(f.x, f.y);
   ctx.rotate(foodWobble * 0.3);
 
+  // Dégradé propre
+  const base = f.color.replace('hsl', 'hsla').replace(')', ', 0.5)');
   const grd = ctx.createRadialGradient(0,0,0,0,0,f.r*2.5);
-  grd.addColorStop(0, f.color+'88');
-  grd.addColorStop(1,'transparent');
+  grd.addColorStop(0, base);
+  grd.addColorStop(1, 'transparent');
   ctx.fillStyle = grd;
   ctx.beginPath(); ctx.arc(0,0,f.r*2.5,0,Math.PI*2); ctx.fill();
 
