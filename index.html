@@ -166,8 +166,8 @@ input[type=range]{accent-color:var(--accent);width:100%;height:28px;}
   <div class="panel">
     <h2>🎮 Jouer</h2>
     <div class="field">
-      <label>Votre pseudo</label>
-      <input type="text" id="inp-name" maxlength="16" placeholder="Ex : DarkHole42"
+      <label>Votre nom de trou du cul</label>
+      <input type="text" id="inp-name" maxlength="16" placeholder="Ex : Tête de CUL"
         autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
     <div class="row-btns">
@@ -182,7 +182,7 @@ input[type=range]{accent-color:var(--accent);width:100%;height:28px;}
 <div id="s-create" class="screen">
   <h1 class="logo">Jeu du trou "special" Team du Midi😎</h1>
   <div class="panel">
-    <h2>✦ Nouvelle partie</h2>
+    <h2>✦ Combien de temps pour cette partie </h2>
     <div class="field">
       <label>Durée</label>
       <div class="slider-row">
@@ -201,7 +201,7 @@ input[type=range]{accent-color:var(--accent);width:100%;height:28px;}
 
 <!-- REJOINDRE -->
 <div id="s-join" class="screen">
-  <h1 class="logo">Jeu du trou "special" Team du Midi😎L</h1>
+  <h1 class="logo">Demande le code au grand maitre des trou du Cul!!</h1>
   <div class="panel">
     <h2>🔗 Rejoindre</h2>
     <div class="field">
@@ -305,7 +305,7 @@ function fmtTime(s){return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function getName(){
   const n=document.getElementById('inp-name').value.trim();
-  if(!n){st('st-home','⚠ Entrez votre pseudo','err');return null;}
+  if(!n){st('st-home','⚠ Entrez votre nom de trou du c','err');return null;}
   return n;
 }
 function showCreate(){if(getName()) showScreen('s-create');}
