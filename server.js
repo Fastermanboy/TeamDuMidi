@@ -43,9 +43,9 @@ const PLAYER_COLORS = [
 // ═══════════════════════════════════════
 //  STATE GLOBAL
 // ═══════════════════════════════════════
-let rooms = {};          // roomId → RoomState
-let clientRoom = {};     // ws → roomId
-let clientId   = {};     // ws → playerId
+let rooms      = {};          // roomId → RoomState
+let clientRoom = new Map();   // ws → roomId
+let clientId   = new Map();   // ws → playerId
 
 // ═══════════════════════════════════════
 //  HTTP (ping de santé)
@@ -68,23 +68,18 @@ wss.on('connection', ws => {
   });
 
   ws.on('close', () => {
-    const rid = clientRoom[ws];
-    const pid = clientId[ws];
+    const rid = clientRoom.get(ws);
+    const pid = clientId.get(ws);
     if (!rid || !rooms[rid]) return;
     const room = rooms[rid];
 
-    // Marquer le joueur comme déconnecté
     const p = room.players.find(p => p.id === pid);
-    if (p) {
-      p.alive = false;
-      p.disconnected = true;
-    }
-    delete clientRoom[ws];
-    delete clientId[ws];
+    if (p) { p.alive = false; p.disconnected = true; }
+    clientRoom.delete(ws);
+    clientId.delete(ws);
 
     broadcast(room, { type: 'playerLeft', playerId: pid });
 
-    // Supprimer la room si vide
     const connected = room.players.filter(p => !p.disconnected);
     if (connected.length === 0) destroyRoom(rid);
   });
@@ -101,7 +96,10 @@ function handleMessage(ws, msg) {
       const room = createRoom(rid, msg.duration || 120);
       rooms[rid] = room;
       const pid = joinRoom(ws, room, msg.name);
+      room.hostId = pid; // ← on mémorise explicitement le host
       send(ws, { type: 'roomCreated', roomId: rid, playerId: pid, colors: PLAYER_COLORS });
+      // Envoyer lobbyUpdate au créateur aussi (pour qu'il voie son nom dans la liste)
+      broadcast(room, { type: 'lobbyUpdate', players: room.players.map(lobbyPlayer) });
       break;
     }
 
@@ -117,21 +115,24 @@ function handleMessage(ws, msg) {
     }
 
     case 'startGame': {
-      const room = rooms[clientRoom[ws]];
+      const room = rooms[clientRoom.get(ws)];
       if (!room || room.started) return;
       if (room.players.length < 2) { send(ws, { type: 'error', msg: 'Il faut au moins 2 joueurs' }); return; }
-      // Seul le host (premier joueur) peut démarrer
-      if (room.players[0].id !== clientId[ws]) return;
+      // Seul le host peut démarrer — on compare avec hostId (robuste)
+      if (room.hostId !== clientId.get(ws)) {
+        send(ws, { type: 'error', msg: 'Seul le host peut lancer la partie' });
+        return;
+      }
       startRoom(room);
       break;
     }
 
     case 'input': {
-      const room = rooms[clientRoom[ws]];
+      const room = rooms[clientRoom.get(ws)];
       if (!room || !room.started) return;
-      const p = room.players.find(p => p.id === clientId[ws]);
+      const p = room.players.find(p => p.id === clientId.get(ws));
       if (p && p.alive) {
-        p.input = msg.input; // { up, down, left, right }
+        p.input = msg.input;
       }
       break;
     }
@@ -177,8 +178,8 @@ function joinRoom(ws, room, name) {
     pulseT: 0,
     ws,
   });
-  clientRoom[ws] = room.id;
-  clientId[ws]   = pid;
+  clientRoom.set(ws, room.id);
+  clientId.set(ws,   pid);
   return pid;
 }
 
