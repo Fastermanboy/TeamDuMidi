@@ -18,15 +18,15 @@ const PORT = process.env.PORT || 8080;
 // ═══════════════════════════════════════
 //  CONSTANTES DE JEU (identiques au client)
 // ═══════════════════════════════════════
-const WORLD_W   = 3200;
-const WORLD_H   = 2400;
-const FOOD_COUNT = 600;
+const WORLD_W   = 6400;
+const WORLD_H   = 4800;
+const FOOD_COUNT = 200;
 const FOOD_RADIUS = 8;
 const BASE_SIZE  = 38;
 const GROW_FOOD  = 4;
 const GROW_PLAYER= 18;
-const BASE_SPEED = 3.8;
-const FRICTION   = 0.88;
+const BASE_SPEED = 2.2;
+const FRICTION   = 0.85;
 const TICK_MS    = 1000 / 60;   // 60 Hz
 
 const PLAYER_COLORS = [
@@ -189,8 +189,8 @@ function startRoom(room) {
   // Positions initiales
   room.players.forEach((p, i) => {
     const angle = (i / room.players.length) * Math.PI * 2;
-    p.x = clamp(WORLD_W / 2 + Math.cos(angle) * 900, 200, WORLD_W - 200);
-    p.y = clamp(WORLD_H / 2 + Math.sin(angle) * 600, 200, WORLD_H - 200);
+    p.x = clamp(WORLD_W / 2 + Math.cos(angle) * 1800, 200, WORLD_W - 200);
+    p.y = clamp(WORLD_H / 2 + Math.sin(angle) * 1200, 200, WORLD_H - 200);
   });
 
   // Nourriture
